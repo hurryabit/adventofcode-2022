@@ -152,21 +152,24 @@ noop"""
 
 
 def solve(reader: io.TextIOBase) -> int:
-    x = 1
-    t = 1
+    t = 0
+    reg = 1
     total = 0
 
-    for line in reader.readlines():
+    def tick():
+        nonlocal t, reg, total
+        t += 1
         if t % 40 == 20:
-            total += x * t
+            total += reg * t
+
+    for line in reader.readlines():
         match line.split():
             case ["noop"]:
-                t += 1
+                tick()
             case ["addx", value]:
-                if (t + 1) % 40 == 20:
-                    total += x * (t + 1)
-                x += int(value)
-                t += 2
+                tick()
+                tick()
+                reg += int(value)
 
     return total
 

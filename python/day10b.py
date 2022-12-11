@@ -161,26 +161,25 @@ EXAMPLE_OUTPUT = [
 ]
 
 
-def draw(screen, t, reg):
-    x = t % 40
-    y = t // 40
-    screen[y][x] = "#" if abs(x - reg) <= 1 else "."
-
-
 def solve(reader: io.TextIOBase) -> list[str]:
-    reg = 1
     t = 0
+    reg = 1
     screen = [40 * [" "] for _ in range(6)]
 
-    for line in reader.readlines():
-        draw(screen, t, reg)
+    def tick():
+        nonlocal t, reg, screen
+        x = t % 40
+        y = t // 40
+        screen[y][x] = "#" if abs(x - reg) <= 1 else "."
         t += 1
+
+    for line in reader.readlines():
         match line.split():
             case ["noop"]:
-                pass
+                tick()
             case ["addx", value]:
-                draw(screen, t, reg)
-                t += 1
+                tick()
+                tick()
                 reg += int(value)
 
     return list(map(lambda row: "".join(row), screen))
